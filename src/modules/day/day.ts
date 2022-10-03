@@ -159,13 +159,15 @@ export function updateCurrentDate(monthOffset: number, newDay?: number, newMonth
       this.monthChanged(this.currentDate, this.getMonthEvents());      
     }
 
-    const clsPref = '.calendar__arrow.calendar__arrow-';
+    const selectorPrefix = '.calendar__arrow.calendar__arrow-';
+
     const [nextKey, prevKey, [prop]] = monthOffset > 0 ? ['next', 'prev', ['end']] : ['prev', 'next', ['start']]
 
-    document.querySelector(clsPref + prevKey)!.classList.remove('disable');    
-    ['getFullYear', 'getMonth']
-      .reduce((acc, f) => acc && (this.currentDate[f]() === this[prop][f]()), true)
-      && document.querySelector(clsPref + nextKey)!.classList.add('disable');
+    const isDisabled = ['getFullYear', 'getMonth'].reduce((acc, f) => acc && (this.currentDate[f]() === this[prop][f]()), true)
+
+    isDisabled && document.querySelector(selectorPrefix + nextKey)!.classList.add('disable');
+
+    document.querySelector(selectorPrefix + prevKey)!.classList.remove('disable');        
 
   }
   // Invoke user provided callback

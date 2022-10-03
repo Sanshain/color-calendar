@@ -200,9 +200,6 @@ export default class Calendar {
     
     this.start = options.startMonth ? new Date(options.startMonth.getFullYear(), options.startMonth.getMonth() - 1, 1) : undefined    
     this.end = options.endMonth ? new Date(options.endMonth.getFullYear(), options.endMonth.getMonth(), 0) : undefined
-    
-    console.log(this.start);
-    console.log(this.end);
 
     if (this.start && (this.start > this.currentDate)) throw new Error('The current date cannot be less than the starting point')
     if (this.end && (this.end < this.currentDate)) throw new Error('The current date cannot be greater than the endpoint');
@@ -218,10 +215,7 @@ export default class Calendar {
           if (this.currentDate.getMonth() == this[prop].getMonth()) this.stepInfo[switchKey].month = false
         }
       }
-    }, this)
-
-    console.log(this.stepInfo);
-    
+    }, this)        
   
 
     this.pickerType = 'month';
