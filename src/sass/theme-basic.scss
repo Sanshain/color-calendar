@@ -9,6 +9,11 @@ $theme: ".basic";
   justify-content: center;
 }
 
+.disable{
+  opacity: .3;
+  pointer-events: none;  
+}
+
 #{$calName}#{$theme} {
   --cal-color-primary: #000000;
   --cal-font-family-header: "Work Sans", sans-serif;

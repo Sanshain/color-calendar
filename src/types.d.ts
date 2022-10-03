@@ -2,8 +2,8 @@ export interface CalendarOptions {
   id?: string;
   currentDate?: Date,
   selectInitialDate?: boolean;
-  start?: Date;
-  end?: Date;
+  startMonth?: Date;
+  endMonth?: Date;
   calendarSize?: CalendarSize;
   layoutModifiers?: LayoutModifier[];
   eventsData?: EventData[];

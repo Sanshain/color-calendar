@@ -14,13 +14,31 @@ export function handleYearPickerClick(e: any) {
 }
 
 export function updateYearPickerSelection(newYearValue: number, newYearIndex?: number) {
-  if(newYearIndex === undefined) {
+    
+  if (newYearIndex === undefined) {
+    
     for(let i = 0; i < 12; i++) {
       let yearPickerChildren = this.pickerYearContainer!.children[i] as HTMLElement;
       let elementYear = parseInt(yearPickerChildren.innerHTML)
+            
+      //@ts-ignore
+      newYearIndex = parseInt(yearPickerChildren.dataset.value);
+
+      if (this.start || this.end) {
+
+        const disable = (this.start && elementYear < this.start.getFullYear()) || (this.end && elementYear > this.start.getFullYear() + 1)
+        console.log(this.end && elementYear > this.start.getFullYear());
+        
+        this.pickerYearContainer!.children[newYearIndex].classList[disable ? 'add' : 'remove']('disable');
+      }      
+
       if(elementYear === newYearValue && yearPickerChildren.dataset.value) {
         newYearIndex = parseInt(yearPickerChildren.dataset.value);
-        break;
+
+        this.removeYearPickerSelection();
+        this.pickerYearContainer!.children[newYearIndex].classList.add('calendar__picker-year-selected');
+
+        if (!this.start && !this.end) break;
       }
     }
 
@@ -29,8 +47,7 @@ export function updateYearPickerSelection(newYearValue: number, newYearIndex?: n
     }
   }
 
-  this.removeYearPickerSelection();
-  this.pickerYearContainer!.children[newYearIndex].classList.add('calendar__picker-year-selected');
+
 }
 
 export function updateYearPickerTodaySelection() {

@@ -145,15 +145,21 @@ export default class Calendar {
   addEventsData!: (newEvents?: EventData[]) => number;
   getDateEvents!: (date: Date) => EventData[];
   getMonthEvents!: () => EventData[];
+  stepInfo = {
+    next: {
+      year: true,
+      month: true
+    },
+    previous: {
+      year: true,
+      month: true
+    }
+  };
 
   constructor(options: CalendarOptions = {}) {
     /* Initialize Options */
     this.id = options.id ?? "#color-calendar";
     this.selectInitialDate = options.selectInitialDate ?? true;
-    // TODO range:
-    this.start = options.start;
-    this.end = options.end;
-    
     this.calendarSize = (options.calendarSize ?? "large") as CalendarSize;
     this.layoutModifiers = options.layoutModifiers ?? [];
     this.eventsData = options.eventsData ?? [];
@@ -188,6 +194,36 @@ export default class Calendar {
     }
     this.today = new Date();
     this.currentDate = options.currentDate || new Date();
+
+    // TODO range:        
+    // this.range: days number [-7, 7]
+    
+    this.start = options.startMonth ? new Date(options.startMonth.getFullYear(), options.startMonth.getMonth() - 1, 1) : undefined    
+    this.end = options.endMonth ? new Date(options.endMonth.getFullYear(), options.endMonth.getMonth(), 0) : undefined
+    
+    console.log(this.start);
+    console.log(this.end);
+
+    if (this.start && (this.start > this.currentDate)) throw new Error('The current date cannot be less than the starting point')
+    if (this.end && (this.end < this.currentDate)) throw new Error('The current date cannot be greater than the endpoint');
+
+    ['start', 'end'].forEach((it: string) => {
+      const prop = it as keyof Calendar;
+      if (this[prop]) {
+        if (this.currentDate.getFullYear() == this[prop].getFullYear()) {
+          const switchKey = prop == 'start' ? 'previous' : 'next';
+
+          this.stepInfo[switchKey].year = false          
+
+          if (this.currentDate.getMonth() == this[prop].getMonth()) this.stepInfo[switchKey].month = false
+        }
+      }
+    }, this)
+
+    console.log(this.stepInfo);
+    
+  
+
     this.pickerType = 'month';
     this.eventDayMap = {};
     this.oldSelectedNode = null;
@@ -214,33 +250,33 @@ export default class Calendar {
     this.calendar.innerHTML = `
       <div class="${this.CAL_NAME} ${this.theme} color-calendar--${this.calendarSize}">
         <div class="calendar__header">
-          <div class="calendar__arrow calendar__arrow-prev"><div class="calendar__arrow-inner"></div></div>
+          <div class="calendar__arrow calendar__arrow-prev ${this.stepInfo.previous.month ? '' : 'disable'}"><div class="calendar__arrow-inner"></div></div>
           <div class="calendar__monthyear">
             <span class="calendar__month"></span>&nbsp;
             <span class="calendar__year"></span>
           </div>
-          <div class="calendar__arrow calendar__arrow-next"><div class="calendar__arrow-inner"></div></div>
+          <div class="calendar__arrow calendar__arrow-next ${this.stepInfo.next.month ? '' : 'disable'}"><div class="calendar__arrow-inner"></div></div>
         </div>
         <div class="calendar__body">
           <div class="calendar__weekdays"></div>
           <div class="calendar__days"></div>
           <div class="calendar__picker">
             <div class="calendar__picker-month">
-              ${(this.customMonthValues ?? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']).map((month, i) => `<div class="calendar__picker-month-option" data-value="${i}">${month}</div>`).join('')}
+              ${(this.customMonthValues ?? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']).map((month, i) => {
+                let disabled = ''
+                if (this.start && this.currentDate) {
+                  if (this.start.getFullYear() == this.currentDate.getFullYear() && i < this.start.getMonth()) disabled = ' disable'
+                }
+                if (this.end && this.currentDate) {
+                  if (this.end.getFullYear() == this.currentDate.getFullYear() && i > this.end.getMonth()) disabled = ' disable'
+                }
+                return `<div class="calendar__picker-month-option${disabled}" data-value="${i}">${month}</div>`
+              }).join('')}
             </div>
             <div class="calendar__picker-year">
-              <div class="calendar__picker-year-option" data-value="0"></div>
-              <div class="calendar__picker-year-option" data-value="1"></div>
-              <div class="calendar__picker-year-option" data-value="2"></div>
-              <div class="calendar__picker-year-option" data-value="3"></div>
-              <div class="calendar__picker-year-option" data-value="4"></div>
-              <div class="calendar__picker-year-option" data-value="5"></div>
-              <div class="calendar__picker-year-option" data-value="6"></div>
-              <div class="calendar__picker-year-option" data-value="7"></div>
-              <div class="calendar__picker-year-option" data-value="8"></div>
-              <div class="calendar__picker-year-option" data-value="9"></div>
-              <div class="calendar__picker-year-option" data-value="10"></div>
-              <div class="calendar__picker-year-option" data-value="11"></div>
+              ${new Array(12).fill(0).map((_, i) => {
+                return `<div class="calendar__picker-year-option" data-value="${i}"></div>`
+              }).join('')}
               <div class="calendar__picker-year-arrow calendar__picker-year-arrow-left">
                 <div class="chevron-thin chevron-thin-left"></div>
               </div>
@@ -279,8 +315,8 @@ export default class Calendar {
           <span class="calendar__month"></span>&nbsp;
           <span class="calendar__year"></span>
         </div>
-        <div class="calendar__arrow calendar__arrow-prev"><div class="calendar__arrow-inner"></div></div>
-        <div class="calendar__arrow calendar__arrow-next"><div class="calendar__arrow-inner"></div></div>
+        <div class="calendar__arrow calendar__arrow-prev"><div class="calendar__arrow-inner ${this.stepInfo.previous.month ? '' : 'disable'}"></div></div>
+        <div class="calendar__arrow calendar__arrow-next"><div class="calendar__arrow-inner ${this.stepInfo.next.month ? '' : 'disable'}"></div></div>
       `
     }
 

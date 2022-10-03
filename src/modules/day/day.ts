@@ -40,7 +40,7 @@ export function setOldSelectedNode() {
     let selectedNode: HTMLElement | undefined = undefined;
     for (let i = 1; i < this.calendarDays!.childNodes.length; i += 2) {
       let ele = this.calendarDays!.childNodes[i] as HTMLElement;
-      if (ele.classList && ele.classList.contains('calendar__day-active') && ele.innerText.trim() === this.currentDate.getDate().toString()) {
+      if (ele.classList && ele.classList.contains('calendar__day-active') && ele.innerText && ele.innerText.trim() === this.currentDate.getDate().toString()) {
         selectedNode = ele;
         break;
       }
@@ -154,9 +154,19 @@ export function updateCurrentDate(monthOffset: number, newDay?: number, newMonth
   if (monthOffset !== 0 || (newMonth !== undefined && newMonth !== null) || newYear) {
     this.updateCalendar(true);
     // Invoke user provided monthChanged callback
+    
     if (this.monthChanged) {
-      this.monthChanged(this.currentDate, this.getMonthEvents());
+      this.monthChanged(this.currentDate, this.getMonthEvents());      
     }
+
+    const clsPref = '.calendar__arrow.calendar__arrow-';
+    const [nextKey, prevKey, [prop]] = monthOffset > 0 ? ['next', 'prev', ['end']] : ['prev', 'next', ['start']]
+
+    document.querySelector(clsPref + prevKey)!.classList.remove('disable');    
+    ['getFullYear', 'getMonth']
+      .reduce((acc, f) => acc && (this.currentDate[f]() === this[prop][f]()), true)
+      && document.querySelector(clsPref + nextKey)!.classList.add('disable');
+
   }
   // Invoke user provided callback
   if (this.dateChanged) {

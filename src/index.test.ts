@@ -156,7 +156,7 @@ describe('custom calendar options when instantiated', () => {
     const id = '#MyTestCalendar';
     const myCalendar = new Calendar({ id });
     const calendarHTMLElement = document.querySelector(`${id} .color-calendar`);
-    expect(myCalendar.id).toBe(id);
+    expect(myCalendar.id).toBe(id);    
     expect(calendarHTMLElement).not.toBeNull();
   });
 

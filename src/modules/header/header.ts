@@ -30,6 +30,19 @@ export function handleMonthYearDisplayClick(e: any) {
     this.yearDisplay!.style.opacity = '0.7';
     this.pickerMonthContainer!.style.display = 'grid';
     this.pickerYearContainer!.style.display = 'none';
+
+    // update month view:
+    [].slice.call(this.pickerMonthContainer!.querySelectorAll('.calendar__picker-month-option')).forEach((element: HTMLElement, i: number) => {      
+      
+      const disabled = checkMonth.bind(this)(+(element.dataset.value || i));
+      element.classList[disabled ? 'add' : 'remove']('disable');
+      
+      const isTodayMonth = this.currentDate.getFullYear() == this.today.getFullYear() && +(element.dataset.value || i) == this.today.getMonth()
+      // const isTodayMonth = ['getFullYear', 'getMonth'].reduce((acc, f) => acc && (this.currentDate[f]() === this.today[f]()), true);      
+      element.classList[isTodayMonth ? 'add' : 'remove']('calendar__picker-month-today')
+      
+    }, this);
+
   } else if (classList.contains("calendar__year")) {
     this.pickerType = 'year';
     this.monthDisplay!.style.opacity = '0.7';
@@ -46,6 +59,24 @@ export function handleMonthYearDisplayClick(e: any) {
     this.togglePicker(true);
   }
 }
+
+
+/***
+ * @description Сhecks whether the current month is available
+ */
+export function checkMonth(i: number) {
+  let disabled = false;
+  if (this.start && this.currentDate) {
+    if (this.start.getFullYear() == this.currentDate.getFullYear() && i < this.start.getMonth())
+      disabled = true;
+  }
+  if (this.end && this.currentDate) {
+    if (this.end.getFullYear() == this.currentDate.getFullYear() && i > this.end.getMonth())
+      disabled = true;
+  }
+  return disabled;
+}
+
 
 export function handlePrevMonthButtonClick() {
   // Check if Month arrow click is disabled
