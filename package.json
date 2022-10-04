@@ -1,6 +1,6 @@
 {
-  "name": "color-calendar",
-  "version": "1.0.7",
+  "name": "corrected-color-calendar",
+  "version": "1.2.0",
   "description": "A customizable events calendar widget library",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
@@ -16,6 +16,9 @@
     "test": "jest"
   },
   "author": "Pawan Kolhe <contact@pawankolhe.com> (https://pawankolhe.com/)",
+  "contributors": [
+    "Sanshain (https://github.com/Sanshain)"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.10.5",
@@ -56,12 +59,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/PawanKolhe/color-calendar.git"
+    "url": "https://github.com/Sanshain/color-calendar.git"
   },
   "bugs": {
     "url": "https://github.com/PawanKolhe/color-calendar/issues"
   },
-  "homepage": "https://github.com/PawanKolhe/color-calendar",
+  "homepage": "https://github.com/Sanshain/color-calendar",
   "files": [
     "/dist"
   ],
