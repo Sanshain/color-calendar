@@ -1,6 +1,6 @@
 {
   "name": "corrected-color-calendar",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A customizable events calendar widget library",
   "main": "dist/bundle.cjs.js",
   "module": "dist/bundle.esm.js",
